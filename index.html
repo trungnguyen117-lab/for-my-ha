@@ -1,426 +1,1263 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Happy March - Hoàng Anh</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Quicksand:wght@300;400;500;600&display=swap');
+      @import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,600&family=Quicksand:wght@300;400;500;600&family=Great+Vibes&display=swap");
 
-        :root {
-            --rose: #e8a0bf;
-            --rose-deep: #d4729c;
-            --rose-light: #f5d5e0;
-            --cream: #fef9f4;
-            --warm-white: #fffaf5;
-            --text: #4a3728;
-            --text-light: #7a6055;
+      :root {
+        --rose: #c97b95;
+        --rose-deep: #a25772;
+        --rose-soft: #e0b0c0;
+        --rose-pale: #f2dce4;
+        --blush: #fbeef2;
+        --cream: #fdf7f4;
+        --warm: #fffbf8;
+        --gold: #b89b6a;
+        --gold-light: #d4bf94;
+        --gold-pale: #ede0cc;
+        --text: #362424;
+        --text-mid: #5e4040;
+        --text-soft: #8c6b6b;
+        --text-faint: #b89a9a;
+        --shadow-rose: rgba(162, 87, 114, 0.08);
+        --shadow-deep: rgba(162, 87, 114, 0.14);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        font-family: "Quicksand", sans-serif;
+        background: var(--cream);
+        color: var(--text);
+        overflow-x: hidden;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      /* ══════ PRELOADER ══════ */
+      .preloader {
+        position: fixed;
+        inset: 0;
+        background: linear-gradient(135deg, var(--cream) 0%, var(--blush) 100%);
+        z-index: 99999;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        transition:
+          opacity 1s cubic-bezier(0.4, 0, 0, 1),
+          visibility 1s;
+      }
+      .preloader.out {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+      }
+
+      .loader-ring {
+        width: 60px;
+        height: 60px;
+        border: 2px solid var(--rose-pale);
+        border-top-color: var(--rose);
+        border-radius: 50%;
+        animation: spin 1.2s linear infinite;
+      }
+      .loader-text {
+        margin-top: 1.5rem;
+        font-size: 0.75rem;
+        letter-spacing: 5px;
+        text-transform: uppercase;
+        color: var(--rose);
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
         }
+      }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+      /* ══════ GLOBAL CANVAS ══════ */
+      #cosmos {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 0;
+      }
 
-        body {
-            font-family: 'Quicksand', sans-serif;
-            background: var(--cream);
-            color: var(--text);
-            overflow-x: hidden;
+      /* ══════ FLOATING PETALS (CSS) ══════ */
+      .petal-layer {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 1;
+        overflow: hidden;
+      }
+      .petal {
+        position: absolute;
+        border-radius: 60% 0 60% 0;
+        opacity: 0;
+        animation: petalDrift linear infinite;
+      }
+      @keyframes petalDrift {
+        0% {
+          opacity: 0;
+          transform: translate(0, -5vh) rotate(0deg) scale(0.7);
         }
-
-        /* Floating petals */
-        .petal {
-            position: fixed;
-            width: 12px;
-            height: 12px;
-            background: var(--rose-light);
-            border-radius: 50% 0 50% 50%;
-            opacity: 0;
-            pointer-events: none;
-            z-index: 0;
-            animation: fall linear forwards;
+        8% {
+          opacity: 0.55;
         }
-
-        @keyframes fall {
-            0% { opacity: 0; transform: translateY(-10vh) rotate(0deg) scale(0.5); }
-            10% { opacity: 0.7; }
-            90% { opacity: 0.5; }
-            100% { opacity: 0; transform: translateY(105vh) rotate(720deg) scale(1); }
+        80% {
+          opacity: 0.35;
         }
-
-        /* Hero */
-        .hero {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            text-align: center;
-            padding: 2rem;
+        100% {
+          opacity: 0;
+          transform: translate(var(--dx), 108vh) rotate(var(--rot)) scale(1);
         }
+      }
 
-        .hero::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: radial-gradient(ellipse at 50% 30%, var(--rose-light) 0%, transparent 60%);
-            opacity: 0.3;
-            pointer-events: none;
-        }
+      /* ══════ SECTIONS ══════ */
+      section {
+        position: relative;
+        z-index: 2;
+      }
 
-        .date-badge {
-            display: inline-block;
-            padding: 0.5rem 1.8rem;
-            border: 1.5px solid var(--rose);
-            border-radius: 50px;
-            font-size: 0.85rem;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            color: var(--rose-deep);
-            margin-bottom: 2rem;
-            animation: fadeUp 1s ease 0.3s both;
-        }
+      .reveal {
+        opacity: 0;
+        transform: translateY(50px);
+        transition:
+          opacity 1s cubic-bezier(0.16, 1, 0.3, 1),
+          transform 1s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      .reveal.vis {
+        opacity: 1;
+        transform: none;
+      }
 
-        .hero h1 {
-            font-family: 'Playfair Display', serif;
-            font-size: clamp(2.5rem, 7vw, 5rem);
-            font-weight: 400;
-            line-height: 1.2;
-            margin-bottom: 0.5rem;
-            animation: fadeUp 1s ease 0.6s both;
-        }
+      /* ══════ HERO ══════ */
+      .hero {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 2rem;
+        position: relative;
+      }
 
-        .hero h1 .name {
-            display: block;
-            font-size: clamp(3rem, 9vw, 6.5rem);
-            font-weight: 700;
-            color: var(--rose-deep);
-            font-style: italic;
-            margin-top: 0.3rem;
+      /* Layered radial glows */
+      .glow {
+        position: absolute;
+        border-radius: 50%;
+        pointer-events: none;
+        filter: blur(60px);
+      }
+      .glow-1 {
+        width: 600px;
+        height: 600px;
+        background: var(--rose-pale);
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        opacity: 0.45;
+        animation: breathe 7s ease-in-out infinite;
+      }
+      .glow-2 {
+        width: 300px;
+        height: 300px;
+        background: var(--gold-pale);
+        top: 35%;
+        left: 60%;
+        transform: translate(-50%, -50%);
+        opacity: 0.3;
+        animation: breathe 9s ease-in-out 2s infinite;
+      }
+      @keyframes breathe {
+        0%,
+        100% {
+          transform: translate(-50%, -50%) scale(1);
         }
+        50% {
+          transform: translate(-50%, -50%) scale(1.18);
+        }
+      }
 
-        .hero .subtitle {
-            font-size: clamp(1rem, 2.5vw, 1.3rem);
-            color: var(--text-light);
-            font-weight: 300;
-            margin-top: 1.5rem;
-            animation: fadeUp 1s ease 0.9s both;
-        }
+      .hero-inner {
+        position: relative;
+        z-index: 2;
+        max-width: 700px;
+      }
 
-        .divider {
-            width: 60px;
-            height: 1.5px;
-            background: var(--rose);
-            margin: 2rem auto;
-            animation: fadeUp 1s ease 1s both;
-        }
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 0.5rem 2rem;
+        border: 1px solid var(--gold-light);
+        border-radius: 100px;
+        font-size: 0.7rem;
+        letter-spacing: 5px;
+        text-transform: uppercase;
+        color: var(--gold);
+        backdrop-filter: blur(6px);
+        background: rgba(255, 255, 255, 0.4);
+        animation: fadeSlide 1s ease 0.4s both;
+      }
+      .badge i {
+        width: 3px;
+        height: 3px;
+        background: var(--gold);
+        border-radius: 50%;
+      }
 
-        /* Flower icon */
-        .flower-icon {
-            margin: 1.5rem 0;
-            animation: fadeUp 1s ease 1.1s both;
-        }
+      .hero-pre {
+        font-family: "Cormorant Garamond", serif;
+        font-size: clamp(1.2rem, 3vw, 1.8rem);
+        font-weight: 300;
+        color: var(--text-soft);
+        margin-top: 2.5rem;
+        animation: fadeSlide 1s ease 0.7s both;
+      }
 
-        .flower-icon svg {
-            width: 48px;
-            height: 48px;
-            fill: var(--rose);
-            animation: gentleSpin 8s linear infinite;
-        }
+      .hero-name {
+        font-family: "Great Vibes", cursive;
+        font-size: clamp(4rem, 12vw, 9rem);
+        line-height: 1.15;
+        margin: 0.3rem 0 0.8rem;
+        position: relative;
+        animation: nameIn 1.4s cubic-bezier(0.16, 1, 0.3, 1) 1s both;
+        background: linear-gradient(
+          135deg,
+          var(--rose-deep) 0%,
+          var(--rose) 30%,
+          var(--gold) 60%,
+          var(--rose-deep) 100%
+        );
+        background-size: 300% 300%;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        animation:
+          nameIn 1.4s cubic-bezier(0.16, 1, 0.3, 1) 1s both,
+          gradientFlow 6s ease-in-out infinite 2.4s;
+      }
 
-        @keyframes gentleSpin {
-            0%, 100% { transform: rotate(0deg) scale(1); }
-            50% { transform: rotate(180deg) scale(1.05); }
+      @keyframes nameIn {
+        from {
+          opacity: 0;
+          transform: translateY(40px) scale(0.9);
+          filter: blur(8px);
         }
+        to {
+          opacity: 1;
+          transform: none;
+          filter: blur(0);
+        }
+      }
+      @keyframes gradientFlow {
+        0%,
+        100% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+      }
 
-        /* Message section */
-        .message-section {
-            max-width: 700px;
-            margin: 0 auto;
-            padding: 4rem 2rem 6rem;
-            text-align: center;
-            position: relative;
-            z-index: 1;
-        }
+      .hero-orn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 14px;
+        margin: 1.2rem 0 1.8rem;
+        animation: fadeSlide 1s ease 1.4s both;
+      }
+      .hero-orn .line {
+        width: 70px;
+        height: 1px;
+        background: linear-gradient(
+          to right,
+          transparent,
+          var(--gold-light),
+          transparent
+        );
+      }
+      .hero-orn .gem {
+        width: 7px;
+        height: 7px;
+        border: 1px solid var(--gold);
+        transform: rotate(45deg);
+      }
 
-        .message-card {
-            background: var(--warm-white);
-            border-radius: 24px;
-            padding: 3rem 2.5rem;
-            box-shadow: 0 4px 30px rgba(232, 160, 191, 0.12);
-            border: 1px solid var(--rose-light);
-            opacity: 0;
-            transform: translateY(30px);
-            transition: all 0.8s ease;
-        }
+      .hero-quote {
+        font-family: "Cormorant Garamond", serif;
+        font-style: italic;
+        font-size: clamp(1rem, 2.2vw, 1.2rem);
+        color: var(--text-soft);
+        font-weight: 300;
+        line-height: 1.9;
+        max-width: 460px;
+        margin: 0 auto;
+        animation: fadeSlide 1s ease 1.7s both;
+      }
 
-        .message-card.visible {
-            opacity: 1;
-            transform: translateY(0);
+      /* Scroll cue */
+      .scroll-cue {
+        position: absolute;
+        bottom: 36px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        animation: fadeSlide 1s ease 2.8s both;
+      }
+      .scroll-cue span {
+        font-size: 0.6rem;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        color: var(--text-faint);
+      }
+      .scroll-arrow {
+        width: 1px;
+        height: 28px;
+        background: linear-gradient(to bottom, var(--rose-soft), transparent);
+        position: relative;
+        animation: arrowPulse 2s ease-in-out infinite;
+      }
+      @keyframes arrowPulse {
+        0%,
+        100% {
+          opacity: 1;
+          transform: scaleY(1);
         }
+        50% {
+          opacity: 0.3;
+          transform: scaleY(0.5);
+          transform-origin: top;
+        }
+      }
 
-        .message-card .quote-mark {
-            font-family: 'Playfair Display', serif;
-            font-size: 4rem;
-            color: var(--rose-light);
-            line-height: 1;
-            margin-bottom: -1rem;
+      @keyframes fadeSlide {
+        from {
+          opacity: 0;
+          transform: translateY(24px);
         }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
 
-        .message-card p {
-            font-size: 1.1rem;
-            line-height: 2;
-            color: var(--text-light);
-            font-weight: 400;
-        }
+      /* ══════ PARALLAX DIVIDER ══════ */
+      .parallax-break {
+        height: 260px;
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .parallax-break .bg-text {
+        font-family: "Great Vibes", cursive;
+        font-size: clamp(5rem, 15vw, 12rem);
+        color: var(--rose-pale);
+        opacity: 0.35;
+        white-space: nowrap;
+        user-select: none;
+        will-change: transform;
+      }
 
-        .message-card p strong {
-            color: var(--rose-deep);
-            font-weight: 600;
-        }
+      /* ══════ LETTER ══════ */
+      .letter-wrap {
+        padding: 2rem 2rem 6rem;
+        display: flex;
+        justify-content: center;
+      }
 
-        .message-card .sign {
-            margin-top: 2rem;
-            font-family: 'Playfair Display', serif;
-            font-style: italic;
-            font-size: 1.2rem;
-            color: var(--rose-deep);
-        }
+      .letter {
+        max-width: 640px;
+        width: 100%;
+        background: linear-gradient(180deg, var(--warm) 0%, #fff 100%);
+        border-radius: 36px;
+        padding: clamp(2.5rem, 6vw, 4.5rem);
+        position: relative;
+        border: 1px solid rgba(224, 176, 192, 0.2);
+        box-shadow:
+          0 2px 4px var(--shadow-rose),
+          0 8px 24px var(--shadow-rose),
+          0 24px 64px var(--shadow-deep);
+      }
 
-        /* Gallery */
-        .wishes {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 1.5rem;
-            max-width: 800px;
-            margin: 0 auto 4rem;
-            padding: 0 2rem;
-        }
+      .letter::before,
+      .letter::after {
+        content: "";
+        position: absolute;
+        left: 30px;
+        right: 30px;
+        height: 2px;
+        border-radius: 2px;
+      }
+      .letter::before {
+        top: 0;
+        background: linear-gradient(
+          to right,
+          transparent,
+          var(--rose-soft),
+          var(--gold-light),
+          var(--rose-soft),
+          transparent
+        );
+      }
+      .letter::after {
+        bottom: 0;
+        background: linear-gradient(
+          to right,
+          transparent,
+          var(--gold-pale),
+          transparent
+        );
+      }
 
-        .wish-card {
-            background: var(--warm-white);
-            border-radius: 16px;
-            padding: 2rem 1.5rem;
-            text-align: center;
-            border: 1px solid var(--rose-light);
-            opacity: 0;
-            transform: translateY(20px);
-            transition: all 0.6s ease;
-        }
+      .letter-to {
+        text-align: center;
+        margin-bottom: 2rem;
+      }
+      .letter-to .label {
+        font-size: 0.65rem;
+        letter-spacing: 5px;
+        text-transform: uppercase;
+        color: var(--text-faint);
+      }
+      .letter-to .name {
+        font-family: "Great Vibes", cursive;
+        font-size: 2.6rem;
+        color: var(--rose-deep);
+        margin-top: 0.2rem;
+      }
 
-        .wish-card.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
+      .letter p {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 1.15rem;
+        line-height: 2.2;
+        color: var(--text-mid);
+        margin-bottom: 1.4rem;
+        text-align: justify;
+      }
+      .letter p:last-of-type {
+        margin-bottom: 0;
+      }
+      .letter em {
+        font-weight: 600;
+        color: var(--rose-deep);
+        font-style: italic;
+      }
 
-        .wish-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 25px rgba(232, 160, 191, 0.15);
-        }
+      .letter-end {
+        text-align: center;
+        margin-top: 2.5rem;
+        padding-top: 2rem;
+        border-top: 1px solid var(--rose-pale);
+      }
 
-        .wish-card .icon {
-            font-size: 2.2rem;
-            margin-bottom: 1rem;
+      .letter-hearts {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        margin-bottom: 1rem;
+        color: var(--rose-pale);
+        font-size: 0.6rem;
+      }
+      .letter-hearts .core {
+        font-size: 1.1rem;
+        color: var(--rose);
+        animation: pulse 2.5s ease-in-out infinite;
+      }
+      @keyframes pulse {
+        0%,
+        100% {
+          transform: scale(1);
         }
+        20% {
+          transform: scale(1.25);
+        }
+        40% {
+          transform: scale(1);
+        }
+        55% {
+          transform: scale(1.18);
+        }
+        70% {
+          transform: scale(1);
+        }
+      }
 
-        .wish-card h3 {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.1rem;
-            margin-bottom: 0.5rem;
-            color: var(--text);
-        }
+      .letter-sign {
+        font-family: "Great Vibes", cursive;
+        font-size: 1.6rem;
+        color: var(--text-mid);
+      }
 
-        .wish-card p {
-            font-size: 0.9rem;
-            color: var(--text-light);
-            line-height: 1.6;
-        }
+      /* ══════ WISHES ══════ */
+      .wishes-wrap {
+        padding: 2rem 2rem 5rem;
+        max-width: 940px;
+        margin: 0 auto;
+      }
 
-        /* Heart animation */
-        .floating-hearts {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            z-index: 10;
-        }
+      .sec-head {
+        text-align: center;
+        margin-bottom: 3rem;
+      }
+      .sec-head .mini-orn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        margin-bottom: 0.8rem;
+      }
+      .sec-head .mini-orn .ml {
+        width: 50px;
+        height: 1px;
+        background: linear-gradient(to right, transparent, var(--gold-pale));
+      }
+      .sec-head .mini-orn .mr {
+        width: 50px;
+        height: 1px;
+        background: linear-gradient(to left, transparent, var(--gold-pale));
+      }
+      .sec-head .mini-orn .md {
+        width: 5px;
+        height: 5px;
+        border: 1px solid var(--gold-light);
+        transform: rotate(45deg);
+      }
 
-        .heart-btn {
-            width: 56px;
-            height: 56px;
-            border-radius: 50%;
-            background: var(--rose);
-            border: none;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 15px rgba(212, 114, 156, 0.3);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
+      .sec-head h2 {
+        font-family: "Cormorant Garamond", serif;
+        font-weight: 300;
+        font-size: clamp(1.5rem, 3.5vw, 2.2rem);
+        color: var(--text-mid);
+      }
+      .sec-head h2 strong {
+        font-weight: 600;
+        color: var(--rose-deep);
+      }
 
-        .heart-btn:hover {
-            transform: scale(1.1);
-            box-shadow: 0 6px 20px rgba(212, 114, 156, 0.4);
-        }
+      .wish-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.4rem;
+      }
 
-        .heart-btn svg {
-            width: 24px;
-            height: 24px;
-            fill: white;
-        }
+      .wish-card {
+        background: linear-gradient(160deg, var(--warm) 0%, #fff 100%);
+        border: 1px solid rgba(224, 176, 192, 0.15);
+        border-radius: 24px;
+        padding: 2.2rem 1.6rem;
+        text-align: center;
+        transition: all 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+        cursor: default;
+        position: relative;
+        overflow: hidden;
+      }
+      .wish-card::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: 24px;
+        background: linear-gradient(
+          135deg,
+          var(--rose-pale) 0%,
+          transparent 50%
+        );
+        opacity: 0;
+        transition: opacity 0.5s ease;
+      }
+      .wish-card:hover::before {
+        opacity: 0.3;
+      }
+      .wish-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 16px 48px var(--shadow-deep);
+        border-color: var(--rose-soft);
+      }
 
-        .mini-heart {
-            position: absolute;
-            font-size: 1.2rem;
-            animation: floatHeart 1.5s ease forwards;
-            pointer-events: none;
-        }
+      .wish-card > * {
+        position: relative;
+        z-index: 1;
+      }
 
-        @keyframes floatHeart {
-            0% { opacity: 1; transform: translate(0, 0) scale(1); }
-            100% { opacity: 0; transform: translate(var(--tx), -120px) scale(0.5); }
-        }
+      .wish-icon {
+        width: 56px;
+        height: 56px;
+        border-radius: 18px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1.2rem;
+        font-size: 1.4rem;
+        background: linear-gradient(
+          135deg,
+          var(--blush) 0%,
+          var(--rose-pale) 100%
+        );
+        color: var(--rose-deep);
+        transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      .wish-card:hover .wish-icon {
+        transform: scale(1.12) rotate(-6deg);
+      }
 
-        @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(25px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+      .wish-card h3 {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 1.15rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+      }
+      .wish-card p {
+        font-size: 0.85rem;
+        color: var(--text-soft);
+        line-height: 1.7;
+      }
 
-        /* Footer */
-        .footer {
-            text-align: center;
-            padding: 2rem;
-            color: var(--rose);
-            font-size: 0.85rem;
-            letter-spacing: 1px;
-        }
+      /* ══════ REASONS SECTION ══════ */
+      .reasons-wrap {
+        padding: 2rem 2rem 5rem;
+        max-width: 620px;
+        margin: 0 auto;
+      }
 
-        /* Responsive */
-        @media (max-width: 600px) {
-            .message-card { padding: 2rem 1.5rem; }
-            .wishes { grid-template-columns: 1fr; }
+      .reason-list {
+        position: relative;
+        padding-left: 40px;
+      }
+      .reason-list::before {
+        content: "";
+        position: absolute;
+        left: 8px;
+        top: 4px;
+        bottom: 4px;
+        width: 1px;
+        background: linear-gradient(
+          to bottom,
+          var(--rose-soft),
+          var(--gold-light),
+          var(--rose-pale)
+        );
+      }
+
+      .reason {
+        margin-bottom: 2.8rem;
+        position: relative;
+      }
+      .reason:last-child {
+        margin-bottom: 0;
+      }
+
+      .reason::before {
+        content: "";
+        position: absolute;
+        left: -32px;
+        top: 6px;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        border: 2px solid var(--rose);
+        background: var(--cream);
+        box-shadow: 0 0 0 4px var(--cream);
+        transition:
+          background 0.3s,
+          transform 0.3s;
+      }
+      .reason.vis::before {
+        background: var(--rose);
+        transform: scale(1.15);
+      }
+
+      .reason-tag {
+        font-size: 0.65rem;
+        letter-spacing: 4px;
+        text-transform: uppercase;
+        color: var(--gold);
+        margin-bottom: 0.4rem;
+      }
+      .reason p {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 1.1rem;
+        color: var(--text-mid);
+        line-height: 1.85;
+      }
+      .reason p strong {
+        color: var(--rose-deep);
+        font-weight: 600;
+      }
+
+      /* ══════ MARQUEE ══════ */
+      .marquee-section {
+        padding: 3rem 0;
+        overflow: hidden;
+      }
+      .marquee-track {
+        display: flex;
+        width: max-content;
+        animation: marqueeScroll 30s linear infinite;
+      }
+      .marquee-track span {
+        font-family: "Great Vibes", cursive;
+        font-size: clamp(2rem, 5vw, 3.5rem);
+        color: var(--rose-pale);
+        white-space: nowrap;
+        padding: 0 2rem;
+        opacity: 0.5;
+      }
+      @keyframes marqueeScroll {
+        from {
+          transform: translateX(0);
         }
+        to {
+          transform: translateX(-50%);
+        }
+      }
+
+      /* ══════ FINAL ══════ */
+      .final-wrap {
+        padding: 4rem 2rem 2rem;
+        text-align: center;
+      }
+
+      .final-quote {
+        font-family: "Cormorant Garamond", serif;
+        font-size: clamp(1.8rem, 4.5vw, 3rem);
+        font-weight: 300;
+        color: var(--text-mid);
+        line-height: 1.55;
+        max-width: 520px;
+        margin: 0 auto 2.5rem;
+      }
+      .final-quote strong {
+        font-family: "Great Vibes", cursive;
+        font-weight: 400;
+        font-size: 1.2em;
+        color: var(--rose-deep);
+      }
+
+      .love-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 1rem 2.8rem;
+        background: linear-gradient(
+          135deg,
+          var(--rose) 0%,
+          var(--rose-deep) 100%
+        );
+        color: #fff;
+        border: none;
+        border-radius: 100px;
+        font-family: "Quicksand", sans-serif;
+        font-size: 0.9rem;
+        font-weight: 500;
+        letter-spacing: 1px;
+        cursor: pointer;
+        transition: all 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+        box-shadow: 0 6px 24px rgba(162, 87, 114, 0.25);
+        position: relative;
+        overflow: hidden;
+      }
+      .love-btn::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          135deg,
+          transparent 0%,
+          rgba(255, 255, 255, 0.15) 50%,
+          transparent 100%
+        );
+        transform: translateX(-100%);
+        transition: transform 0.6s ease;
+      }
+      .love-btn:hover::before {
+        transform: translateX(100%);
+      }
+      .love-btn:hover {
+        transform: translateY(-3px) scale(1.03);
+        box-shadow: 0 10px 36px rgba(162, 87, 114, 0.35);
+      }
+      .love-btn:active {
+        transform: translateY(0) scale(0.98);
+      }
+
+      /* ══════ FOOTER ══════ */
+      footer {
+        text-align: center;
+        padding: 3rem 2rem;
+        font-size: 0.7rem;
+        letter-spacing: 3px;
+        color: var(--text-faint);
+        text-transform: uppercase;
+      }
+      footer .h {
+        color: var(--rose);
+      }
+
+      /* ══════ BURST OVERLAY ══════ */
+      .burst-overlay {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 9990;
+      }
+      .burst-particle {
+        position: absolute;
+        border-radius: 50%;
+        animation: burstOut 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      }
+      @keyframes burstOut {
+        0% {
+          opacity: 1;
+          transform: translate(0, 0) scale(1);
+        }
+        100% {
+          opacity: 0;
+          transform: translate(var(--bx), var(--by)) scale(0);
+        }
+      }
+
+      .toast {
+        position: fixed;
+        bottom: 40px;
+        left: 50%;
+        transform: translateX(-50%) translateY(20px);
+        background: linear-gradient(
+          135deg,
+          var(--rose) 0%,
+          var(--rose-deep) 100%
+        );
+        color: #fff;
+        padding: 0.8rem 2rem;
+        border-radius: 100px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        box-shadow: 0 8px 30px rgba(162, 87, 114, 0.3);
+        opacity: 0;
+        z-index: 9991;
+        pointer-events: none;
+        transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      .toast.show {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+
+      /* ══════ RESPONSIVE ══════ */
+      @media (max-width: 700px) {
+        .wish-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+        .parallax-break {
+          height: 160px;
+        }
+      }
+      @media (max-width: 480px) {
+        .wish-grid {
+          grid-template-columns: 1fr;
+        }
+        .letter {
+          border-radius: 24px;
+          padding: 2rem 1.5rem;
+        }
+      }
     </style>
-</head>
-<body>
-
-    <!-- Hero -->
-    <section class="hero">
-        <div class="date-badge">Tháng 3 &bull; 2026</div>
-        <h1>
-            Chúc mừng ngày của em
-            <span class="name">Hoàng Anh</span>
-        </h1>
-        <div class="divider"></div>
-        <div class="flower-icon">
-            <svg viewBox="0 0 100 100">
-                <circle cx="50" cy="30" r="14" opacity="0.8"/>
-                <circle cx="70" cy="45" r="14" opacity="0.7"/>
-                <circle cx="62" cy="68" r="14" opacity="0.6"/>
-                <circle cx="38" cy="68" r="14" opacity="0.7"/>
-                <circle cx="30" cy="45" r="14" opacity="0.8"/>
-                <circle cx="50" cy="50" r="10" fill="#fff" opacity="0.9"/>
-            </svg>
-        </div>
-        <p class="subtitle">Gửi tặng em những lời yêu thương nhất</p>
-    </section>
-
-    <!-- Message -->
-    <section class="message-section">
-        <div class="message-card" id="messageCard">
-            <div class="quote-mark">"</div>
-            <p>
-                Tháng 3 về mang theo nắng ấm và hoa,
-                nhưng tất cả cũng không rực rỡ bằng nụ cười của em.<br><br>
-                Cảm ơn em — <strong>Hoàng Anh</strong> — vì đã luôn là nguồn năng lượng
-                tích cực, là động lực, là niềm vui trong mỗi ngày của anh.<br><br>
-                Chúc em luôn hạnh phúc, xinh đẹp, và toả sáng
-                như cách em vẫn luôn làm.
-            </p>
-            <div class="sign">— Với tất cả yêu thương —</div>
-        </div>
-    </section>
-
-    <!-- Wishes -->
-    <section class="wishes" id="wishes">
-        <div class="wish-card">
-            <div class="icon">✿</div>
-            <h3>Xinh đẹp</h3>
-            <p>Chúc em luôn rạng rỡ, tự tin và xinh đẹp mỗi ngày</p>
-        </div>
-        <div class="wish-card">
-            <div class="icon">♡</div>
-            <h3>Hạnh phúc</h3>
-            <p>Chúc em luôn tràn đầy niềm vui và hạnh phúc bên cạnh anh</p>
-        </div>
-        <div class="wish-card">
-            <div class="icon">☀</div>
-            <h3>Thành công</h3>
-            <p>Chúc em gặt hái thật nhiều thành công trên con đường phía trước</p>
-        </div>
-    </section>
-
-    <div class="footer">Made with ♡ for Hoàng Anh</div>
-
-    <!-- Floating heart button -->
-    <div class="floating-hearts" id="heartContainer">
-        <button class="heart-btn" id="heartBtn">
-            <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-        </button>
+  </head>
+  <body>
+    <!-- PRELOADER -->
+    <div class="preloader" id="preloader">
+      <div class="loader-ring"></div>
+      <div class="loader-text">loading</div>
     </div>
 
+    <!-- BACKGROUND -->
+    <canvas id="cosmos"></canvas>
+
+    <!-- PETALS -->
+    <div class="petal-layer" id="petalLayer"></div>
+
+    <!-- ════════ HERO ════════ -->
+    <section class="hero">
+      <div class="glow glow-1"></div>
+      <div class="glow glow-2"></div>
+      <div class="hero-inner">
+        <div class="badge"><i></i> Tháng Ba <i></i> 2026 <i></i></div>
+        <p class="hero-pre">Gửi đến người anh yêu thương nhất</p>
+        <div class="hero-name">Hoàng Anh</div>
+        <div class="hero-orn">
+          <span class="line"></span>
+          <span class="gem"></span>
+          <span class="line"></span>
+        </div>
+        <p class="hero-quote">
+          "Em là mùa xuân giữa đời anh —<br />
+          nơi mọi thứ bắt đầu nở hoa."
+        </p>
+      </div>
+      <div class="scroll-cue">
+        <span>Cuộn xuống</span>
+        <div class="scroll-arrow"></div>
+      </div>
+    </section>
+
+    <!-- ════════ PARALLAX ════════ -->
+    <div class="parallax-break">
+      <div class="bg-text" id="parText">
+        Yêu em mãi ♡ Yêu em mãi ♡ Yêu em mãi
+      </div>
+    </div>
+
+    <!-- ════════ LETTER ════════ -->
+    <section class="letter-wrap">
+      <div class="letter reveal">
+        <div class="letter-to">
+          <div class="label">Thư gửi</div>
+          <div class="name">Hoàng Anh</div>
+        </div>
+
+        <p>Em yêu,</p>
+        <p>
+          Tháng 3 về, anh muốn viết cho em vài dòng — không phải vì ngày đặc
+          biệt nào, mà bởi vì <em>mỗi ngày có em đều là đặc biệt</em>.
+        </p>
+        <p>
+          Anh vẫn nhớ cảm giác lần đầu nhìn thấy nụ cười của em. Lúc đó anh đã
+          biết, cuộc đời mình sẽ không bao giờ giống như trước nữa. Em đã mang
+          đến ánh sáng cho những ngày xám xịt, mang đến <em>ý nghĩa</em> cho
+          những khoảnh khắc bình thường nhất.
+        </p>
+        <p>
+          Cảm ơn em vì đã luôn là chính mình — dịu dàng, mạnh mẽ, và đẹp đẽ theo
+          cách mà không ai có thể thay thế. Anh hứa sẽ luôn ở đây, yêu em nhiều
+          hơn mỗi ngày, kể cả khi em nghĩ rằng
+          <em>điều đó là không thể</em>.
+        </p>
+
+        <div class="letter-end">
+          <div class="letter-hearts">
+            <span>♡</span><span>♡</span>
+            <span class="core">♥</span>
+            <span>♡</span><span>♡</span>
+          </div>
+          <div class="letter-sign">Yêu em thật nhiều — Anh</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════ WISHES ════════ -->
+    <section class="wishes-wrap">
+      <div class="sec-head reveal">
+        <div class="mini-orn">
+          <span class="ml"></span><span class="md"></span
+          ><span class="mr"></span>
+        </div>
+        <h2>Anh chúc <strong>em</strong> luôn</h2>
+      </div>
+      <div class="wish-grid">
+        <div class="wish-card reveal">
+          <div class="wish-icon">✿</div>
+          <h3>Xinh đẹp</h3>
+          <p>Rạng ngời với vẻ đẹp tự nhiên mà em đã luôn có</p>
+        </div>
+        <div class="wish-card reveal">
+          <div class="wish-icon">♡</div>
+          <h3>Hạnh phúc</h3>
+          <p>Mỗi ngày đều tràn đầy tiếng cười và niềm vui nhỏ</p>
+        </div>
+        <div class="wish-card reveal">
+          <div class="wish-icon">✦</div>
+          <h3>Thành công</h3>
+          <p>Gặt hái thành quả xứng đáng trên con đường em chọn</p>
+        </div>
+        <div class="wish-card reveal">
+          <div class="wish-icon">☁</div>
+          <h3>Bình an</h3>
+          <p>Tâm hồn luôn nhẹ nhàng, thanh thản giữa cuộc sống</p>
+        </div>
+        <div class="wish-card reveal">
+          <div class="wish-icon">♬</div>
+          <h3>Tự do</h3>
+          <p>Bay cao bay xa, sống hết mình với đam mê</p>
+        </div>
+        <div class="wish-card reveal">
+          <div class="wish-icon">∞</div>
+          <h3>Được yêu</h3>
+          <p>Luôn được trân trọng, nâng niu — bởi anh, mãi mãi</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════ REASONS ════════ -->
+    <section class="reasons-wrap">
+      <div class="sec-head reveal">
+        <div class="mini-orn">
+          <span class="ml"></span><span class="md"></span
+          ><span class="mr"></span>
+        </div>
+        <h2>Vì sao anh yêu <strong>em</strong></h2>
+      </div>
+      <div class="reason-list">
+        <div class="reason reveal">
+          <div class="reason-tag">Nụ cười</div>
+          <p>
+            Nụ cười của em có thể biến ngày tồi tệ nhất thành
+            <strong>kỷ niệm đẹp</strong>.
+          </p>
+        </div>
+        <div class="reason reveal">
+          <div class="reason-tag">Sự ấm áp</div>
+          <p>
+            Cách em quan tâm mọi người — nhẹ nhàng, tinh tế,
+            <strong>không cần phô trương</strong>.
+          </p>
+        </div>
+        <div class="reason reveal">
+          <div class="reason-tag">Sự mạnh mẽ</div>
+          <p>
+            Em kiên cường hơn em tưởng, và điều đó khiến anh
+            <strong>ngưỡng mộ</strong> mỗi ngày.
+          </p>
+        </div>
+        <div class="reason reveal">
+          <div class="reason-tag">Tất cả</div>
+          <p>
+            Từ đôi mắt, giọng nói, cách em cười — anh yêu
+            <strong>toàn bộ con người em</strong>.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════ MARQUEE ════════ -->
+    <section class="marquee-section">
+      <div class="marquee-track">
+        <span>Yêu em nhiều lắm ♡</span>
+        <span>Hoàng Anh xinh đẹp ♡</span>
+        <span>Mãi bên em ♡</span>
+        <span>Happy March ♡</span>
+        <span>Yêu em nhiều lắm ♡</span>
+        <span>Hoàng Anh xinh đẹp ♡</span>
+        <span>Mãi bên em ♡</span>
+        <span>Happy March ♡</span>
+      </div>
+    </section>
+
+    <!-- ════════ FINAL ════════ -->
+    <section class="final-wrap">
+      <div class="reveal">
+        <p class="final-quote">
+          Em mãi là điều<br /><strong>đẹp nhất</strong><br />
+          mà cuộc đời đã dành tặng anh.
+        </p>
+        <button class="love-btn" id="loveBtn">Gửi trọn yêu thương ♡</button>
+      </div>
+    </section>
+
+    <div class="toast" id="toast">Đã gửi triệu yêu thương đến Hoàng Anh ♡</div>
+
+    <footer>Made with <span class="h">♥</span> for Hoàng Anh</footer>
+
     <script>
-        // Falling petals
-        function createPetal() {
-            const petal = document.createElement('div');
-            petal.className = 'petal';
-            const x = Math.random() * 100;
-            const size = 8 + Math.random() * 10;
-            const duration = 6 + Math.random() * 6;
-            const delay = Math.random() * 2;
-            const hueShift = Math.random() * 20 - 10;
+      // ── Preloader ──
+      window.addEventListener("load", () => {
+        setTimeout(
+          () => document.getElementById("preloader").classList.add("out"),
+          800,
+        );
+      });
 
-            petal.style.cssText = `
-                left: ${x}vw;
-                width: ${size}px;
-                height: ${size}px;
-                animation-duration: ${duration}s;
-                animation-delay: ${delay}s;
-                filter: hue-rotate(${hueShift}deg);
-            `;
-            document.body.appendChild(petal);
-            setTimeout(() => petal.remove(), (duration + delay) * 1000);
-        }
+      // ── Canvas: bokeh particles ──
+      const cvs = document.getElementById("cosmos");
+      const c = cvs.getContext("2d");
+      let W, H;
+      const resize = () => {
+        W = cvs.width = innerWidth;
+        H = cvs.height = innerHeight;
+      };
+      resize();
+      addEventListener("resize", resize);
 
-        setInterval(createPetal, 800);
-        for (let i = 0; i < 6; i++) setTimeout(createPetal, i * 300);
+      const dots = Array.from({ length: 50 }, () => ({
+        x: Math.random() * innerWidth,
+        y: Math.random() * innerHeight,
+        r: Math.random() * 3 + 1,
+        dx: (Math.random() - 0.5) * 0.25,
+        dy: (Math.random() - 0.5) * 0.25,
+        o: Math.random() * 0.18 + 0.03,
+        phase: Math.random() * Math.PI * 2,
+        color: Math.random() > 0.5 ? "201,123,149" : "184,155,106",
+      }));
 
-        // Scroll reveal
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach((entry, i) => {
-                if (entry.isIntersecting) {
-                    setTimeout(() => entry.target.classList.add('visible'), i * 150);
-                }
-            });
-        }, { threshold: 0.2 });
+      let mx = -999,
+        my = -999;
+      document.addEventListener("mousemove", (e) => {
+        mx = e.clientX;
+        my = e.clientY;
+      });
 
-        document.getElementById('messageCard') && observer.observe(document.getElementById('messageCard'));
-        document.querySelectorAll('.wish-card').forEach(card => observer.observe(card));
+      function drawDots() {
+        c.clearRect(0, 0, W, H);
+        const t = performance.now() * 0.001;
+        dots.forEach((d) => {
+          d.x += d.dx;
+          d.y += d.dy;
+          if (d.x < -20) d.x = W + 20;
+          if (d.x > W + 20) d.x = -20;
+          if (d.y < -20) d.y = H + 20;
+          if (d.y > H + 20) d.y = -20;
 
-        // Heart button
-        document.getElementById('heartBtn').addEventListener('click', function() {
-            for (let i = 0; i < 5; i++) {
-                setTimeout(() => {
-                    const heart = document.createElement('span');
-                    heart.className = 'mini-heart';
-                    heart.textContent = ['♡', '♥', '❤'][Math.floor(Math.random() * 3)];
-                    heart.style.setProperty('--tx', (Math.random() * 80 - 40) + 'px');
-                    heart.style.left = (10 + Math.random() * 30) + 'px';
-                    heart.style.color = `hsl(${340 + Math.random() * 20}, 70%, ${60 + Math.random() * 20}%)`;
-                    document.getElementById('heartContainer').appendChild(heart);
-                    setTimeout(() => heart.remove(), 1500);
-                }, i * 100);
-            }
+          const dist = Math.hypot(mx - d.x, my - d.y);
+          const glow = dist < 150 ? (1 - dist / 150) * 0.35 : 0;
+          const opacity = d.o + Math.sin(t + d.phase) * 0.04 + glow;
+          const radius = d.r + glow * 4;
+
+          c.beginPath();
+          c.arc(d.x, d.y, radius, 0, Math.PI * 2);
+          c.fillStyle = `rgba(${d.color}, ${opacity})`;
+          c.fill();
+
+          if (radius > 2.5) {
+            c.beginPath();
+            c.arc(d.x, d.y, radius * 2.5, 0, Math.PI * 2);
+            c.fillStyle = `rgba(${d.color}, ${opacity * 0.15})`;
+            c.fill();
+          }
         });
+
+        // Draw connections
+        dots.forEach((a, i) => {
+          dots.slice(i + 1).forEach((b) => {
+            const d = Math.hypot(a.x - b.x, a.y - b.y);
+            if (d < 120) {
+              c.beginPath();
+              c.moveTo(a.x, a.y);
+              c.lineTo(b.x, b.y);
+              c.strokeStyle = `rgba(201,123,149, ${(1 - d / 120) * 0.06})`;
+              c.lineWidth = 0.5;
+              c.stroke();
+            }
+          });
+        });
+
+        requestAnimationFrame(drawDots);
+      }
+      drawDots();
+
+      // ── Petals ──
+      const petalLayer = document.getElementById("petalLayer");
+      function spawnPetal() {
+        const el = document.createElement("div");
+        el.className = "petal";
+        const size = 8 + Math.random() * 12;
+        const dur = 10 + Math.random() * 10;
+        const hue =
+          Math.random() > 0.7
+            ? "40,20%,78%"
+            : `340,${40 + Math.random() * 20}%,${78 + Math.random() * 10}%`;
+        el.style.cssText = `
+            left: ${Math.random() * 100}vw;
+            width: ${size}px; height: ${size}px;
+            background: hsl(${hue});
+            --dx: ${(Math.random() - 0.5) * 100}px;
+            --rot: ${360 + Math.random() * 720}deg;
+            animation-duration: ${dur}s;
+            animation-delay: ${Math.random() * 3}s;
+        `;
+        petalLayer.appendChild(el);
+        setTimeout(() => el.remove(), (dur + 3) * 1000);
+      }
+      setInterval(spawnPetal, 1200);
+      for (let i = 0; i < 8; i++) setTimeout(spawnPetal, i * 400);
+
+      // ── Parallax text ──
+      const parText = document.getElementById("parText");
+      window.addEventListener(
+        "scroll",
+        () => {
+          const s = window.scrollY;
+          parText.style.transform = `translateX(${-s * 0.15}px)`;
+        },
+        { passive: true },
+      );
+
+      // ── Scroll reveal ──
+      const io = new IntersectionObserver(
+        (es) => {
+          es.forEach((e) => {
+            if (e.isIntersecting) {
+              e.target.classList.add("vis");
+              io.unobserve(e.target);
+            }
+          });
+        },
+        { threshold: 0.12, rootMargin: "0px 0px -30px 0px" },
+      );
+
+      document.querySelectorAll(".reveal").forEach((el, i) => {
+        el.style.transitionDelay = `${(i % 5) * 0.08}s`;
+        io.observe(el);
+      });
+
+      // Also observe reasons for dot fill
+      document.querySelectorAll(".reason").forEach((el) => io.observe(el));
+
+      // ── Love button ──
+      const loveBtn = document.getElementById("loveBtn");
+      const toast = document.getElementById("toast");
+
+      loveBtn.addEventListener("click", function (e) {
+        const rect = this.getBoundingClientRect();
+        const cx = rect.left + rect.width / 2;
+        const cy = rect.top + rect.height / 2;
+
+        // Burst particles
+        const overlay = document.createElement("div");
+        overlay.className = "burst-overlay";
+        document.body.appendChild(overlay);
+
+        const colors = ["#c97b95", "#a25772", "#b89b6a", "#e0b0c0", "#d4bf93"];
+        for (let i = 0; i < 30; i++) {
+          const p = document.createElement("div");
+          p.className = "burst-particle";
+          const angle = (Math.PI * 2 * i) / 30 + (Math.random() - 0.5) * 0.3;
+          const dist = 60 + Math.random() * 120;
+          const s = 3 + Math.random() * 6;
+          p.style.cssText = `
+                left: ${cx}px; top: ${cy}px;
+                width: ${s}px; height: ${s}px;
+                background: ${colors[Math.floor(Math.random() * colors.length)]};
+                --bx: ${Math.cos(angle) * dist}px;
+                --by: ${Math.sin(angle) * dist}px;
+                animation-delay: ${Math.random() * 0.15}s;
+            `;
+          overlay.appendChild(p);
+        }
+        setTimeout(() => overlay.remove(), 1500);
+
+        // Extra petals
+        for (let i = 0; i < 12; i++) setTimeout(spawnPetal, i * 80);
+
+        // Toast
+        toast.classList.add("show");
+        setTimeout(() => toast.classList.remove("show"), 2500);
+      });
     </script>
-</body>
+  </body>
 </html>
