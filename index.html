@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy March - Hoàng Anh</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Quicksand:wght@300;400;500;600&display=swap');
+
+        :root {
+            --rose: #e8a0bf;
+            --rose-deep: #d4729c;
+            --rose-light: #f5d5e0;
+            --cream: #fef9f4;
+            --warm-white: #fffaf5;
+            --text: #4a3728;
+            --text-light: #7a6055;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: var(--cream);
+            color: var(--text);
+            overflow-x: hidden;
+        }
+
+        /* Floating petals */
+        .petal {
+            position: fixed;
+            width: 12px;
+            height: 12px;
+            background: var(--rose-light);
+            border-radius: 50% 0 50% 50%;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 0;
+            animation: fall linear forwards;
+        }
+
+        @keyframes fall {
+            0% { opacity: 0; transform: translateY(-10vh) rotate(0deg) scale(0.5); }
+            10% { opacity: 0.7; }
+            90% { opacity: 0.5; }
+            100% { opacity: 0; transform: translateY(105vh) rotate(720deg) scale(1); }
+        }
+
+        /* Hero */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(ellipse at 50% 30%, var(--rose-light) 0%, transparent 60%);
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        .date-badge {
+            display: inline-block;
+            padding: 0.5rem 1.8rem;
+            border: 1.5px solid var(--rose);
+            border-radius: 50px;
+            font-size: 0.85rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--rose-deep);
+            margin-bottom: 2rem;
+            animation: fadeUp 1s ease 0.3s both;
+        }
+
+        .hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.5rem, 7vw, 5rem);
+            font-weight: 400;
+            line-height: 1.2;
+            margin-bottom: 0.5rem;
+            animation: fadeUp 1s ease 0.6s both;
+        }
+
+        .hero h1 .name {
+            display: block;
+            font-size: clamp(3rem, 9vw, 6.5rem);
+            font-weight: 700;
+            color: var(--rose-deep);
+            font-style: italic;
+            margin-top: 0.3rem;
+        }
+
+        .hero .subtitle {
+            font-size: clamp(1rem, 2.5vw, 1.3rem);
+            color: var(--text-light);
+            font-weight: 300;
+            margin-top: 1.5rem;
+            animation: fadeUp 1s ease 0.9s both;
+        }
+
+        .divider {
+            width: 60px;
+            height: 1.5px;
+            background: var(--rose);
+            margin: 2rem auto;
+            animation: fadeUp 1s ease 1s both;
+        }
+
+        /* Flower icon */
+        .flower-icon {
+            margin: 1.5rem 0;
+            animation: fadeUp 1s ease 1.1s both;
+        }
+
+        .flower-icon svg {
+            width: 48px;
+            height: 48px;
+            fill: var(--rose);
+            animation: gentleSpin 8s linear infinite;
+        }
+
+        @keyframes gentleSpin {
+            0%, 100% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.05); }
+        }
+
+        /* Message section */
+        .message-section {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 4rem 2rem 6rem;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .message-card {
+            background: var(--warm-white);
+            border-radius: 24px;
+            padding: 3rem 2.5rem;
+            box-shadow: 0 4px 30px rgba(232, 160, 191, 0.12);
+            border: 1px solid var(--rose-light);
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease;
+        }
+
+        .message-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .message-card .quote-mark {
+            font-family: 'Playfair Display', serif;
+            font-size: 4rem;
+            color: var(--rose-light);
+            line-height: 1;
+            margin-bottom: -1rem;
+        }
+
+        .message-card p {
+            font-size: 1.1rem;
+            line-height: 2;
+            color: var(--text-light);
+            font-weight: 400;
+        }
+
+        .message-card p strong {
+            color: var(--rose-deep);
+            font-weight: 600;
+        }
+
+        .message-card .sign {
+            margin-top: 2rem;
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: 1.2rem;
+            color: var(--rose-deep);
+        }
+
+        /* Gallery */
+        .wishes {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+            max-width: 800px;
+            margin: 0 auto 4rem;
+            padding: 0 2rem;
+        }
+
+        .wish-card {
+            background: var(--warm-white);
+            border-radius: 16px;
+            padding: 2rem 1.5rem;
+            text-align: center;
+            border: 1px solid var(--rose-light);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s ease;
+        }
+
+        .wish-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .wish-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(232, 160, 191, 0.15);
+        }
+
+        .wish-card .icon {
+            font-size: 2.2rem;
+            margin-bottom: 1rem;
+        }
+
+        .wish-card h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+        }
+
+        .wish-card p {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            line-height: 1.6;
+        }
+
+        /* Heart animation */
+        .floating-hearts {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 10;
+        }
+
+        .heart-btn {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: var(--rose);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(212, 114, 156, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .heart-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(212, 114, 156, 0.4);
+        }
+
+        .heart-btn svg {
+            width: 24px;
+            height: 24px;
+            fill: white;
+        }
+
+        .mini-heart {
+            position: absolute;
+            font-size: 1.2rem;
+            animation: floatHeart 1.5s ease forwards;
+            pointer-events: none;
+        }
+
+        @keyframes floatHeart {
+            0% { opacity: 1; transform: translate(0, 0) scale(1); }
+            100% { opacity: 0; transform: translate(var(--tx), -120px) scale(0.5); }
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(25px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--rose);
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .message-card { padding: 2rem 1.5rem; }
+            .wishes { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="date-badge">Tháng 3 &bull; 2026</div>
+        <h1>
+            Chúc mừng ngày của em
+            <span class="name">Hoàng Anh</span>
+        </h1>
+        <div class="divider"></div>
+        <div class="flower-icon">
+            <svg viewBox="0 0 100 100">
+                <circle cx="50" cy="30" r="14" opacity="0.8"/>
+                <circle cx="70" cy="45" r="14" opacity="0.7"/>
+                <circle cx="62" cy="68" r="14" opacity="0.6"/>
+                <circle cx="38" cy="68" r="14" opacity="0.7"/>
+                <circle cx="30" cy="45" r="14" opacity="0.8"/>
+                <circle cx="50" cy="50" r="10" fill="#fff" opacity="0.9"/>
+            </svg>
+        </div>
+        <p class="subtitle">Gửi tặng em những lời yêu thương nhất</p>
+    </section>
+
+    <!-- Message -->
+    <section class="message-section">
+        <div class="message-card" id="messageCard">
+            <div class="quote-mark">"</div>
+            <p>
+                Tháng 3 về mang theo nắng ấm và hoa,
+                nhưng tất cả cũng không rực rỡ bằng nụ cười của em.<br><br>
+                Cảm ơn em — <strong>Hoàng Anh</strong> — vì đã luôn là nguồn năng lượng
+                tích cực, là động lực, là niềm vui trong mỗi ngày của anh.<br><br>
+                Chúc em luôn hạnh phúc, xinh đẹp, và toả sáng
+                như cách em vẫn luôn làm.
+            </p>
+            <div class="sign">— Với tất cả yêu thương —</div>
+        </div>
+    </section>
+
+    <!-- Wishes -->
+    <section class="wishes" id="wishes">
+        <div class="wish-card">
+            <div class="icon">✿</div>
+            <h3>Xinh đẹp</h3>
+            <p>Chúc em luôn rạng rỡ, tự tin và xinh đẹp mỗi ngày</p>
+        </div>
+        <div class="wish-card">
+            <div class="icon">♡</div>
+            <h3>Hạnh phúc</h3>
+            <p>Chúc em luôn tràn đầy niềm vui và hạnh phúc bên cạnh anh</p>
+        </div>
+        <div class="wish-card">
+            <div class="icon">☀</div>
+            <h3>Thành công</h3>
+            <p>Chúc em gặt hái thật nhiều thành công trên con đường phía trước</p>
+        </div>
+    </section>
+
+    <div class="footer">Made with ♡ for Hoàng Anh</div>
+
+    <!-- Floating heart button -->
+    <div class="floating-hearts" id="heartContainer">
+        <button class="heart-btn" id="heartBtn">
+            <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+        </button>
+    </div>
+
+    <script>
+        // Falling petals
+        function createPetal() {
+            const petal = document.createElement('div');
+            petal.className = 'petal';
+            const x = Math.random() * 100;
+            const size = 8 + Math.random() * 10;
+            const duration = 6 + Math.random() * 6;
+            const delay = Math.random() * 2;
+            const hueShift = Math.random() * 20 - 10;
+
+            petal.style.cssText = `
+                left: ${x}vw;
+                width: ${size}px;
+                height: ${size}px;
+                animation-duration: ${duration}s;
+                animation-delay: ${delay}s;
+                filter: hue-rotate(${hueShift}deg);
+            `;
+            document.body.appendChild(petal);
+            setTimeout(() => petal.remove(), (duration + delay) * 1000);
+        }
+
+        setInterval(createPetal, 800);
+        for (let i = 0; i < 6; i++) setTimeout(createPetal, i * 300);
+
+        // Scroll reveal
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry, i) => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => entry.target.classList.add('visible'), i * 150);
+                }
+            });
+        }, { threshold: 0.2 });
+
+        document.getElementById('messageCard') && observer.observe(document.getElementById('messageCard'));
+        document.querySelectorAll('.wish-card').forEach(card => observer.observe(card));
+
+        // Heart button
+        document.getElementById('heartBtn').addEventListener('click', function() {
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => {
+                    const heart = document.createElement('span');
+                    heart.className = 'mini-heart';
+                    heart.textContent = ['♡', '♥', '❤'][Math.floor(Math.random() * 3)];
+                    heart.style.setProperty('--tx', (Math.random() * 80 - 40) + 'px');
+                    heart.style.left = (10 + Math.random() * 30) + 'px';
+                    heart.style.color = `hsl(${340 + Math.random() * 20}, 70%, ${60 + Math.random() * 20}%)`;
+                    document.getElementById('heartContainer').appendChild(heart);
+                    setTimeout(() => heart.remove(), 1500);
+                }, i * 100);
+            }
+        });
+    </script>
+</body>
+</html>
